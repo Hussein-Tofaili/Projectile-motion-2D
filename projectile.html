@@ -1,0 +1,144 @@
+<html>
+<style>
+#header{
+min-height: 100px;
+margin-left: 10%;
+margin-right: 10%;
+}
+#body{
+min-height: 400px;
+margin-top: 3%;
+margin-left: 10%;
+margin-right: 10%;
+}
+@viewport{
+zoom: 1.0;
+width: extend-to-zoom;
+}
+@-ms-viewport{
+width: extend-to-zoom;
+zoom: 1.0;
+}
+</style>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <title>Projectile Motion</title>
+
+</head>
+<body style="font-family:sans-serif; font-size:15px; width:650px; margin-left:auto; margin-right:auto; background-color:#c0c0c0;">
+
+<h1 style="font-size:24px; text-align:center; color:#800000;">Projectile Motion</h1>
+
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=default'></script>
+
+$$ {J(\theta) =\frac{1}{2m} [\sum^m_{i=1}(h_\theta(x^{(i)}) - y^{(i)})2 + \lambda\sum^n_{j=1}\theta^2_j} $$
+<p style="color:black;font-size:22px;" align="center">Any object moving freely only under the influee</p>
+
+
+
+<div style="width:600px; margin-left:auto; margin-right:auto; position:relative;">
+
+	<img src="background.png" width="600" height="300" style="position:absolute;bottom:10;">
+	
+   
+<canvas id="trailCanvas" width="600" height="300" style="position:absolute; ">
+        Canvas not supported; please update your browser.
+    </canvas>
+	<img src="cannonBall.png" id="cannonBall" width="20" height="20" style="position:absolute; bottom:40; left:20">
+	<img src="cannonBody.png" id="cannonBody" width="170" height="50" style="position:absolute; bottom:30; left:-50; transform:rotate(-40deg);">
+	<img src="cannonWheel.png" id="cannonWheel" width="50" height="50" style="position:absolute; bottom:25; left:15">
+<canvas id="theCanvas"  width="600" height="300" style="position:relative; border:1px solid #000000;bottom:10">
+        Canvas not supported; please update your browser.
+    </canvas>
+</div>
+<br><br>
+<div style="text-align:center;">
+    <input type="button" value="Fire!" onclick="FireProjectile();" style="width: 20%; height: 10%;font-size:22px;">  <!add button>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 <input type="button" value="Clear" onclick="ClearProjectile();" style="width: 20%; height: 10%;font-size:22px;">  <!add button>
+	<br>
+    <br>
+	<p style="color:black;font-size:22px;">Initial angle = <span id="angleReadout">45</span> 
+    <input type="range" id="angleSlider" min="0" max="90" step="5" value="45" oninput="showAngle();" onchange="showAngle();" style="width: 50%;">  <!add slider>
+</p>	
+</div>
+<p style="color:black;font-size:22px;" align="center">This simulation is based on projetile motion where you have a cannon of variable angle and the cannon ball representing the projectile</p>
+
+<script>
+var trailCanvas = document.getElementById("trailCanvas");
+var trailContext = trailCanvas.getContext("2d");
+
+var cannonBody = document.getElementById("cannonBody");
+var cannonBall = document.getElementById("cannonBall");
+var cannonWheel = document.getElementById("cannonWheel");
+var AngleSlider = document.getElementById("angleSlider");
+var angleReadout = document.getElementById("angleReadout");
+var dt=0;
+var v0=10;
+var g=0.20;
+var timer;
+var Cleft=cannonBody.style.left;
+var t=0;
+var ia; // initial angle
+var ia2= Math.PI/4;
+var aud=new Audio("Cannon.mp3");
+var test=1;
+
+
+function moveProjectile(){
+cannonBall.style.left=v0*Math.cos(ia)*dt+20;
+cannonBall.style.bottom=-((g*dt*dt)/(2))-v0*Math.sin(ia)*dt+40;
+dt+=0.2;
+if(-((g*dt*dt)/(2))-v0*Math.sin(ia)*dt+40>=40){
+timer = window.setTimeout(moveProjectile, 1);
+test=0;
+}
+else {
+aud.pause();
+aud.currentTime = 0;
+test=1;
+}
+trailContext.fillStyle = "#FF0000";
+trailContext.fillRect(v0*Math.cos(ia)*dt+30, ((g*dt*dt)/(2))+v0*Math.sin(ia)*dt+252, 1, 1);
+if(t<5){
+cannonBody.style.height=50+3*Math.sin(t);
+cannonBody.style.width=170+3*Math.sin(t);
+cannonBody.style.left=cannonBody.style.left;
+t+=0.04;
+}
+}
+
+function FireProjectile(){
+if(test==1){
+ia=-Number(AngleSlider.value)*Math.PI/180;
+window.clearTimeout(timer);
+dt=0;
+t=0;
+moveProjectile();
+aud.play();
+}
+}
+
+function ClearProjectile(){
+trailContext.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
+cannonBall.style.left=20;
+cannonBall.style.bottom=40;
+}
+
+function showAngle(){
+ ia2=-Number(AngleSlider.value)+8;
+ angleReadout.innerHTML = AngleSlider.value;
+cannonBody.style.transform='rotate('+ia2+'deg)';
+cannonBody.style.left=-50-AngleSlider.value/8;
+cannonWheel.style.left=15-AngleSlider.value/8;
+}
+
+
+
+
+</script>
+
+
+</body>
+</html>
